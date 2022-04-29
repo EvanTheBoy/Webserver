@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class ServerThread implements Runnable {
     private Socket socket;
@@ -26,7 +27,7 @@ public class ServerThread implements Runnable {
                     + "\r\n";
             output.write(head.getBytes());
             String s = "<html><h1>我收到了你的请求:" + "系统时间:" + System.currentTimeMillis() + "</h1></html>";
-            output.write(s.getBytes());
+            output.write(s.getBytes(StandardCharsets.UTF_8));
             output.flush();
             socket.close();
             System.out.println("一个http请求结束!");
