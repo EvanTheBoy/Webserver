@@ -6,10 +6,13 @@ import java.net.Socket;
 
 public class Webserver {
     public void createServer(int port) {
+
         try {
             ServerSocket ss = new ServerSocket(port);
-            Socket s = ss.accept();
-            
+            while (true) {
+                Socket s = ss.accept();
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
