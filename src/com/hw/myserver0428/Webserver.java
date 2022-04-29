@@ -1,6 +1,5 @@
 package com.hw.myserver0428;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -10,13 +9,18 @@ public class Webserver {
             ServerSocket ss = new ServerSocket(port);
             while (true) {
                 Socket s = ss.accept();
-                ServerThread st = new ServerThread(s);
-                Thread t = new Thread(st);
-                t.start();
+                //处理调用处理方法
+                process(s);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void process(Socket s) {
+        ServerThread st = new ServerThread(s);
+        Thread t = new Thread(st);
+        t.start();
     }
 
     public static void main(String[] args) {
