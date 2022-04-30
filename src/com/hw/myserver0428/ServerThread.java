@@ -31,9 +31,9 @@ public class ServerThread implements Runnable {
             //以下是处理流程，究竟是老朋友还是新朋友，用session判断，这个session应该是保存在浏览器内存的，浏览器关掉就没了
             if (message.indexOf("SessionminiWeb") > 0) {
                 //如果是老朋友
-                String head = "HTTP/1.0 200 OK\r\n"
-                        + "Server:batMimiServer/1.0\r\n"
-                        + "Content-Type:text/html\r\n"
+                String head = "HTTP/1.0 200 OK \r\n"
+                        + "Server:batMimiServer/1.0 \r\n"
+                        + "Content-Type:text/html \r\n"
                         + "\r\n";
                 output.write(head.getBytes());
                 int start = message.indexOf("SessionminiWeb");
