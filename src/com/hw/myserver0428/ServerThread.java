@@ -41,7 +41,7 @@ public class ServerThread implements Runnable {
             } else {
                 //请求文件不存在，就产生404页面
                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
-                String notFound = "<html><h1>404 Not Found</h1></html>";
+                String notFound = "<html><h1>404 Not Found!</h1></html>";
                 String head = "HTTP/1.0 404 no found \r\n"
                         + "Content-Type:text/html \r\n"
                         + "\r\n";
