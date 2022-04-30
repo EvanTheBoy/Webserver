@@ -17,6 +17,7 @@ public class ServerThread implements Runnable {
             BufferedReader bReader = new BufferedReader(input); //将字符流包装成缓冲流
             //解释该请求以确定所请求的特定文件
             String line = bReader.readLine();
+            System.out.println(line);
             String[] lineArr = line.split(" "); //根据空格切割
             String fileName = lineArr[1].substring(1); //下面这个fileName就是index.html
             //根据文件名从服务器的文件系统获取文件，其实也就是从磁盘读取文件。
@@ -39,9 +40,10 @@ public class ServerThread implements Runnable {
                 bos.close();
                 bis.close();
             } else {
+                System.out.println(fileName);
                 //请求文件不存在，就产生404页面
                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
-                String notFound = "<html><h1>404 Not Found!</h1></html>";
+                String notFound = "<html><h1>404 Not Found</h1></html>";
                 String head = "HTTP/1.0 404 no found \r\n"
                         + "Content-Type:text/html \r\n"
                         + "\r\n";
