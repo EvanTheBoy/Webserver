@@ -9,6 +9,7 @@ public class Response {
         this.output = output;
     }
 
+    //输出数据给浏览器
     public void write(String msg) {
         try {
             output.write(msg.getBytes());
