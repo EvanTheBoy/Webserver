@@ -8,8 +8,9 @@ public class Webserver {
         try {
             ServerSocket ss = new ServerSocket(port);
             while (true) {
+                //当有客户连接时，创建一个套接字
                 Socket s = ss.accept();
-                //处理调用处理方法
+                //处理调用处理方法，处理HTTP请求
                 process(s);
             }
         } catch (Exception e) {

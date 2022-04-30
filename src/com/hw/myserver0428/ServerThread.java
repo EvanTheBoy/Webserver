@@ -1,8 +1,6 @@
 package com.hw.myserver0428;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
@@ -12,51 +10,35 @@ public class ServerThread implements Runnable {
         this.socket = s;
     }
 
-    //一下可生成全局唯一的session流水号
-    private int count = 0;
-    private String getSeq() {
-        return "系统时间:" + System.currentTimeMillis() + (count++) + "miniWebServer";
-    }
-
     @Override
     public void run() {
         try {
-            InputStream input = socket.getInputStream();
-            OutputStream output = socket.getOutputStream();
-            byte[] data = new byte[1024];
-            input.read(data);
-            String message = new String(data);
-            System.out.println("http客户端请求内容:" + message);
-            String html = "";
-            //以下是处理流程，究竟是老朋友还是新朋友，用session判断，这个session应该是保存在浏览器内存的，浏览器关掉就没了
-            if (message.indexOf("SessionminiWeb") > 0) {
-                //如果是老朋友
-                String head = "HTTP/1.0 200 OK \r\n"
-                        + "Server:batMimiServer/1.0 \r\n"
-                        + "Content-Type:text/html \r\n"
-                        + "\r\n";
-                output.write(head.getBytes());
-                int start = message.indexOf("SessionminiWeb");
-                int end = message.indexOf("miniWebServer");
-                String sessionStr = message.substring(start, end);
-                html = "<html><h1><br>老朋友，我记得你的sid" + sessionStr + "</h1></html>";
-            } else {
-                //这里就是新朋友了
-                String sid = getSeq();
-                String head = "HTTP/1.0 200 OK\r\n"
-                        +"Set-Cookie:SessionminiWeb=" + sid + "\r\n"
-                        +"Server:batMimiServer/1.0\r\n"
-                        +"Content-Type:text/html\r\n"
-                        +"\r\n";
-                output.write(head.getBytes());
-                html = "<html><h1><br>第一次来的朋友，送你一个sid:" + sid + "</h1></html>";
+            InputStreamReader input = new InputStreamReader(socket.getInputStream());
+            BufferedReader bReader = new BufferedReader(input); //将字符流包装成缓冲流
+            //解释该请求以确定所请求的特定文件
+            String line = bReader.readLine();
+            String[] lineArr = line.split(" "); //根据空格切割
+            String fileName = lineArr[1].substring(1); //下面这个fileName就是index.html
+            //根据文件名从服务器的文件系统获取文件，其实也就是从磁盘读取文件。
+            FileInputStream fis = new FileInputStream(fileName);
+            BufferedInputStream bis = new BufferedInputStream(fis); //我们还是转换成缓冲流以提高效率
+            byte[] bytes = new byte[1024];
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+            int length = 0;
+            //由请求文件组成的HTTP响应报文，报文前面有首部行
+            String head = "HTTP/1.0 200 OK \r\n"
+                    + "Content-Type:text/html \r\n"
+                    + "\r\n";
+            bos.write(head.getBytes(StandardCharsets.UTF_8)); //先把首部行发出去，再发数据
+            //现在发数据,向请求浏览器发送响应
+            while ((length = bis.read(bytes)) != -1) {
+                bos.write(bytes, 0, length);
             }
-            output.write(html.getBytes(StandardCharsets.UTF_8));
-            output.flush();
-            output.close();
+            bos.close();
+            bis.close();
+            bReader.close();
             socket.close();
-            System.out.println("一个http请求结束!");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
