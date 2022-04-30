@@ -40,7 +40,6 @@ public class ServerThread implements Runnable {
                 bos.close();
                 bis.close();
             } else {
-                System.out.println(fileName);
                 //请求文件不存在，就产生404页面
                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                 String notFound = "<html><h1>404 Not Found</h1></html>";
